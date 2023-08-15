@@ -1,0 +1,5 @@
+---
+collections:
+  - name: bec.docker
+    version: 1.0.0
+...
