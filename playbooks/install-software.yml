@@ -1,6 +1,0 @@
----
-- name: Install Docker
-  hosts: docker
-  roles:
-    - bec.docker.docker_ce
-...
