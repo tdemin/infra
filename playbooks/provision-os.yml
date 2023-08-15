@@ -1,0 +1,6 @@
+---
+- name: Provision OS
+  hosts: all
+  roles:
+    - common
+...

@@ -1,0 +1,8 @@
+---
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: "{{ common_hostname }}"
+    use: systemd
+
+# TODO: this list is to be continued
+...
