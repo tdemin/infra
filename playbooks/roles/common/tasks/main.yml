@@ -26,5 +26,16 @@
     - regex: ^(?:#\s*)?UsePAM\s+(?:yes|no)$
       line: UsePAM yes
 
+- name: Disable unwanted Ubuntu software
+  ansible.builtin.systemd:
+    unit: "{{ item }}"
+    state: stopped
+    enabled: false
+  loop:
+    - ufw.service
+    - snapd.service
+    - snapd.socket
+    - snapd.seeded.service
+
 # TODO: this list is to be continued
 ...
