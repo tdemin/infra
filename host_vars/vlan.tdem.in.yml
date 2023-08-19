@@ -1,3 +1,26 @@
 ---
 ansible_host: 193.33.194.24
+
+nftables_allowed_wan_dports_udp: [43821]
+nftables_allowed_wan_dports_tcp: [ssh]
+
+vpn_interface_name: wg0
+
+nftables_extra_input_rules:
+  - meta iifname {{ vpn_interface_name }} accept
+nftables_extra_forward_rules:
+  - meta iifname {{ vpn_interface_name }} meta oifname {{ vpn_interface_name }} accept
+  - meta iifname {{ vpn_interface_name }} meta oifname {{ wan_interface_name }} accept
+  - meta iifname {{ wan_interface_name }} meta oifname {{ vpn_interface_name }} ct state { established, related } accept
+
+nftables_extra_config: |
+  table ip nat {
+    chain prerouting {
+      type nat hook prerouting priority -150;
+    }
+    chain postrouting {
+      type nat hook postrouting priority -150;
+      meta iifname {{ vpn_interface_name }} masquerade persistent
+    }
+  }
 ...

@@ -1,0 +1,32 @@
+---
+- name: Install & configure nftables
+  hosts: linux
+  tasks:
+    - name: Install nftables
+      ansible.builtin.apt:
+        name:
+          - nftables
+    - name: Write nftables config
+      ansible.builtin.copy:
+        dest: /etc/nftables.conf
+        content: "{{ nftables_config }}"
+        # nftables config can be executed directly if shebanged with
+        # /usr/sbin/nft -f
+        mode: "0700"
+        owner: root
+        group: root
+        validate: /usr/sbin/nft -c -f %s
+      notify:
+        - reload nftables
+    - name: Ensure nftables is enabled at boot
+      ansible.builtin.systemd:
+        unit: nftables.service
+        enabled: true
+  handlers:
+    - name: Reload nftables configuration
+      ansible.builtin.systemd:
+        unit: nftables.service
+        state: reloaded
+      listen:
+        - reload nftables
+...
