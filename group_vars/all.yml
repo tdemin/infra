@@ -1,3 +1,16 @@
 ---
 common_hostname: "{{ inventory_hostname_short }}"
+
+_common_groups:
+  - devops
+common_groups: "{{ _common_groups }}"
+
+_common_users:
+  - name: tdemin
+    groups:
+      - sudo
+      - devops
+    ssh_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBrr+qCbWOMnIncFn+ZFzSDJsDOvTDMVLnS1BUvRaEof
+common_users: "{{ _common_users }}"
 ...

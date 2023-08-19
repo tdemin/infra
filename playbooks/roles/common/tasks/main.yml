@@ -37,5 +37,28 @@
     - snapd.socket
     - snapd.seeded.service
 
+- name: Create groups
+  ansible.builtin.group:
+    name: "{{ item }}"
+  loop: "{{ common_groups }}"
+
+- name: Create users
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: "{{ item.groups }}"
+    # on Ubuntu, setting an empty password means the user will be able
+    # to login via SSH, but unable to login through TTY and everywhere
+    # else; the user will still be able to set a password by running
+    # passwd
+    password: ""
+  loop: "{{ common_users }}"
+
+- name: Provision user SSH keys
+  ansible.posix.authorized_key:
+    # concatenating keys through
+    key: "{{ item.ssh_keys | join('\n') }}"
+    user: "{{ item.name }}"
+  loop: "{{ common_users }}"
+
 # TODO: this list is to be continued
 ...
