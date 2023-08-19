@@ -58,7 +58,6 @@
 
 - name: Provision user SSH keys
   ansible.posix.authorized_key:
-    # concatenating keys through
     key: "{{ item.ssh_keys | join('\n') }}"
     user: "{{ item.name }}"
   loop: "{{ common_users }}"
