@@ -1,6 +1,7 @@
 ---
-common_configure_sshd: true
 common_ubuntu_disable_software: true
+
+common_configure_sshd: true
 
 # [sudo, wheel, devops, admin]
 common_groups: []

@@ -1,0 +1,13 @@
+---
+- name: Disable unwanted Ubuntu software
+  when: common_ubuntu_disable_software
+  ansible.builtin.systemd:
+    unit: "{{ item }}"
+    state: stopped
+    enabled: false
+  loop:
+    - ufw.service
+    - snapd.service
+    - snapd.socket
+    - snapd.seeded.service
+...

@@ -1,66 +1,11 @@
 ---
-- name: Set hostname
-  when: common_hostname is defined
-  ansible.builtin.hostname:
-    name: "{{ common_hostname }}"
-    use: systemd
+- name: Do common OS routines
+  import_tasks: common.yml
 
-- name: Configure common OpenSSH settings
-  when: common_configure_sshd
-  ansible.builtin.lineinfile:
-    path: /etc/ssh/sshd_config
-    regex: "{{ item.regex }}"
-    line: "{{ item.line }}"
-    validate: /usr/sbin/sshd -t
-  notify:
-    - restart sshd
-  loop:
-    - regex: ^(?:#\s*)?PasswordAuthentication\s+(?:yes|no)$
-      line: PasswordAuthentication no
-    - regex: ^(?:#\s*)?Port\s+22$
-      line: Port 22
-    - regex: ^(?:#\s*)?PermitRootLogin\s+(?:prohibit-password|yes|no)$
-      line: PermitRootLogin no
-    - regex: ^(?:#\s*)?PubkeyAuthentication\s+(?:yes|no)$
-      line: PubkeyAuthentication yes
-    - regex: ^(?:#\s*)?PasswordAuthentication\s+(?:yes|no)$
-      line: PasswordAuthentication no
-    - regex: ^(?:#\s*)?UsePAM\s+(?:yes|no)$
-      line: UsePAM yes
+- name: Do user management tasks
+  import_tasks: user-management.yml
 
-- name: Disable unwanted Ubuntu software
-  when: common_ubuntu_disable_software
-  ansible.builtin.systemd:
-    unit: "{{ item }}"
-    state: stopped
-    enabled: false
-  loop:
-    - ufw.service
-    - snapd.service
-    - snapd.socket
-    - snapd.seeded.service
-
-- name: Create groups
-  ansible.builtin.group:
-    name: "{{ item }}"
-  loop: "{{ common_groups }}"
-
-- name: Create users
-  ansible.builtin.user:
-    name: "{{ item.name }}"
-    groups: "{{ item.groups }}"
-    # on Ubuntu, setting an empty password means the user will be able
-    # to login via SSH, but unable to login through TTY and everywhere
-    # else; the user will still be able to set a password by running
-    # passwd
-    password: ""
-  loop: "{{ common_users }}"
-
-- name: Provision user SSH keys
-  ansible.posix.authorized_key:
-    key: "{{ item.ssh_keys | join('\n') }}"
-    user: "{{ item.name }}"
-  loop: "{{ common_users }}"
-
-# TODO: this list is to be continued
+- name: Do common Ubuntu routines
+  when: ansible_distribution == 'Ubuntu'
+  import_tasks: ubuntu.yml
 ...
