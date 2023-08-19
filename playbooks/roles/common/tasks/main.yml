@@ -1,10 +1,12 @@
 ---
 - name: Set hostname
+  when: common_hostname is defined
   ansible.builtin.hostname:
     name: "{{ common_hostname }}"
     use: systemd
 
 - name: Configure common OpenSSH settings
+  when: common_configure_sshd
   ansible.builtin.lineinfile:
     path: /etc/ssh/sshd_config
     regex: "{{ item.regex }}"
@@ -27,6 +29,7 @@
       line: UsePAM yes
 
 - name: Disable unwanted Ubuntu software
+  when: common_ubuntu_disable_software
   ansible.builtin.systemd:
     unit: "{{ item }}"
     state: stopped

@@ -1,0 +1,11 @@
+---
+common_configure_sshd: true
+common_ubuntu_disable_software: true
+
+# [sudo, wheel, devops, admin]
+common_groups: []
+# - name: tdemin
+#   groups: [sudo, wheel, devops, admin]
+#   keys: ["ssh-ed25519 ...", "..."]
+common_users: []
+...
