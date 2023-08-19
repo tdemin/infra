@@ -36,7 +36,7 @@
   when: common_configure_passwordless_sudo_for_gsudo
   ansible.builtin.copy:
     dest: /etc/sudoers.d/10-passwordless-sudo-for-gsudo
-    mode: 0600
+    mode: "0600"
     owner: root
     group: root
     content: |

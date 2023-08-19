@@ -1,11 +1,11 @@
 ---
 - name: Do common OS routines
-  import_tasks: common.yml
+  ansible.builtin.import_tasks: common.yml
 
 - name: Do user management tasks
-  import_tasks: user-management.yml
+  ansible.builtin.import_tasks: user-management.yml
 
 - name: Do common Ubuntu routines
   when: ansible_distribution == 'Ubuntu'
-  import_tasks: ubuntu.yml
+  ansible.builtin.import_tasks: ubuntu.yml
 ...

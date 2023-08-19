@@ -1,0 +1,10 @@
+---
+version: '3'
+
+tasks:
+  lint:
+    desc: Call Ansible syntax check and ansible-lint on playbooks
+    cmds:
+      - ansible-playbook --syntax-check playbooks/*.yml
+      - ansible-lint playbooks/*.yml
+...
