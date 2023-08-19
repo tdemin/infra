@@ -27,4 +27,18 @@
       line: PasswordAuthentication no
     - regex: ^(?:#\s*)?UsePAM\s+(?:yes|no)$
       line: UsePAM yes
+
+# TODO: verify this works outside of Ubuntu. The default Ubuntu
+# installation preconfigures /etc/sudoers to include files from
+# /etc/sudoers.d out of the box, and is confirmed to do so since at
+# least Ubuntu 20.04
+- name: Configure passwordless sudo for gsudo group
+  when: common_configure_passwordless_sudo_for_gsudo
+  ansible.builtin.copy:
+    dest: /etc/sudoers.d/10-passwordless-sudo-for-gsudo
+    mode: 0600
+    owner: root
+    group: root
+    content: |
+      %gsudo ALL=(ALL:ALL) NOPASSWD: ALL
 ...

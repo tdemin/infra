@@ -2,6 +2,7 @@
 common_ubuntu_disable_software: true
 
 common_configure_sshd: true
+common_configure_passwordless_sudo_for_gsudo: false
 
 # [sudo, wheel, devops, admin]
 common_groups: []

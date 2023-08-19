@@ -1,14 +1,18 @@
 ---
 common_hostname: "{{ inventory_hostname_short }}"
 
+common_configure_passwordless_sudo_for_gsudo: true
+
 _common_groups:
   - devops
+  - gsudo
 common_groups: "{{ _common_groups }}"
 
 _common_users:
   - name: tdemin
     groups:
       - sudo
+      - gsudo
       - devops
     ssh_keys:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBrr+qCbWOMnIncFn+ZFzSDJsDOvTDMVLnS1BUvRaEof
