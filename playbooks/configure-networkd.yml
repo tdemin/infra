@@ -1,0 +1,35 @@
+---
+- name: Configure networking on Linux machines
+  hosts: linux
+  tasks:
+    - name: Copy network config files
+      ansible.builtin.import_role:
+        name: common
+        tasks_from: files
+      vars:
+        networkd_config_location: /etc/systemd/network
+        common_files_create:
+          - dest: "{{ networkd_config_location }}"
+            state: directory
+            mode: 0755
+            owner: root
+            group: root
+        common_files_copy: >-
+          {{ networkd_files_copy
+            | map('networkd_populate_file_properties',
+                config_path=networkd_config_location)
+          }}
+        common_files_template: []
+      notify:
+        - restart systemd-networkd
+  handlers:
+    # while systemd-networkd technically allows reloading configs, the
+    # reload it does generally results in some of the configuration
+    # applying and some not; running a full restart is generally safer
+    - name: Restart systemd-networkd
+      ansible.builtin.systemd:
+        unit: systemd-networkd.service
+        state: restarted
+      listen:
+        - restart systemd-networkd
+...

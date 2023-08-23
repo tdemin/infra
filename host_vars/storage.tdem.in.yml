@@ -1,3 +1,7 @@
 ---
 ansible_host: 193.33.194.118
+
+wan_interface_mac_address: 52:54:00:16:6e:33
+wan_interface_ip: "{{ ansible_host }}/24"
+wan_interface_gateway: 193.33.194.1
 ...

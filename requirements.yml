@@ -2,4 +2,6 @@
 collections:
   - name: bec.docker
     version: 1.0.0
+  - name: community.sops
+    version: 1.6.4
 ...

@@ -1,6 +1,4 @@
 ---
-wan_interface_name: eth0
-
 nftables_allowed_wan_dports_tcp:
   - ssh
   - "{ http, https }"

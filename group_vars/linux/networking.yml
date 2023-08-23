@@ -1,0 +1,30 @@
+---
+wan_interface_name: eth0
+
+dns_servers:
+  - 1.1.1.1
+  - 1.0.0.1
+
+networkd_wan_config:
+  - dest: 10-{{ wan_interface_name }}.link
+    content: |
+      [Match]
+      MACAddress={{ wan_interface_mac_address }}
+      [Link]
+      Name={{ wan_interface_name }}
+  - dest: 10-{{ wan_interface_name }}.network
+    content: |
+      [Match]
+      Name={{ wan_interface_name }}
+      [Network]
+      LinkLocalAddressing=no
+      Address={{ wan_interface_ip }}
+      Gateway={{ wan_interface_gateway }}
+      {% for server in dns_servers %}
+      DNS={{ server }}
+      {% endfor %}
+networkd_extra_config: []
+
+networkd_files_copy: >-
+  {{ networkd_wan_config + networkd_extra_config }}
+...

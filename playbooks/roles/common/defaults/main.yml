@@ -10,4 +10,8 @@ common_groups: []
 #   groups: [sudo, wheel, devops, admin]
 #   keys: ["ssh-ed25519 ...", "..."]
 common_users: []
+
+common_files_create: []
+common_files_copy: []
+common_files_template: []
 ...
