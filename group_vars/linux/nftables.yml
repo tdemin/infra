@@ -35,6 +35,7 @@ nftables_config: |
   {% endfor %}
       counter
     }
+  {% if not (nftables_enable_forwarding is defined and nftables_enable_forwarding) %}
     chain forward {
       type filter hook forward priority 0
       policy drop
@@ -42,6 +43,7 @@ nftables_config: |
       {{ rule }}
   {% endfor %}
     }
+  {% endif %}
     chain output {
       type filter hook output priority 0
       policy accept

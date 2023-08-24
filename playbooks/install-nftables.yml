@@ -18,6 +18,9 @@
         validate: /usr/sbin/nft -c -f %s
       notify:
         - reload nftables
+        # Docker isolation rules get reset on ruleset flush (which is
+        # what one does at the start of a proper nftables config anyway)
+        - restart dockerd
     - name: Ensure nftables is enabled at boot
       ansible.builtin.systemd:
         unit: nftables.service
@@ -29,4 +32,11 @@
         state: reloaded
       listen:
         - reload nftables
+    - name: Restart Docker daemon
+      when: nftables_enable_docker_restart
+      ansible.builtin.systemd:
+        unit: docker.service
+        state: restarted
+      listen:
+        - restart dockerd
 ...

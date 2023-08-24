@@ -2,4 +2,9 @@
 docker_daemon_config:
   log-driver: journald
   userland-proxy: false
+
+# TODO: can we really restrict IP forwarding for Docker machines and do
+# we need to?
+nftables_enable_forwarding: true
+nftables_enable_docker_restart: true
 ...
