@@ -2,11 +2,11 @@
 - name: Do common OS routines
   ansible.builtin.import_tasks: common.yml
 
-- name: Copy files
-  ansible.builtin.import_tasks: files.yml
-
 - name: Do user management tasks
   ansible.builtin.import_tasks: user-management.yml
+
+- name: Copy files
+  ansible.builtin.import_tasks: files.yml
 
 - name: Do common Ubuntu routines
   when: ansible_distribution == 'Ubuntu'

@@ -7,7 +7,8 @@
 - name: Create users
   ansible.builtin.user:
     name: "{{ item.name }}"
-    groups: "{{ item.groups }}"
+    groups: "{{ item.get('groups', []) }}"
+    shell: "{{ item.get('shell', '/bin/bash') }}"
     # on Ubuntu, setting an empty password means the user will be able
     # to login via SSH, but unable to login through TTY and everywhere
     # else; the user will still be able to set a password by running
