@@ -1,18 +1,18 @@
 ---
 - name: Create files and directories
-  ansible.builtin.file: "{{ file_to_create }}"
+  ansible.builtin.file: "{{ file_to_create }}" # noqa: risky-file-permissions
   loop: "{{ common_files_create }}"
   loop_control:
     loop_var: file_to_create
 
 - name: Copy files
-  ansible.builtin.copy: "{{ file_to_copy }}"
+  ansible.builtin.copy: "{{ file_to_copy }}" # noqa: risky-file-permissions
   loop: "{{ common_files_copy }}"
   loop_control:
     loop_var: file_to_copy
 
 - name: Template files
-  ansible.builtin.template: "{{ file_to_template }}"
+  ansible.builtin.template: "{{ file_to_template }}" # noqa: risky-file-permissions
   loop: "{{ common_files_template }}"
   loop_control:
     loop_var: file_to_template

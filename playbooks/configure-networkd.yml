@@ -7,11 +7,11 @@
         name: common
         tasks_from: files
       vars:
-        networkd_config_location: /etc/systemd/network
+        networkd_config_location: /etc/systemd/network # noqa: var-naming[no-role-prefix]
         common_files_create:
           - dest: "{{ networkd_config_location }}"
             state: directory
-            mode: 0755
+            mode: "0755"
             owner: root
             group: root
         common_files_copy: >-
