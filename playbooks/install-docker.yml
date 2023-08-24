@@ -18,11 +18,13 @@
         mode: "0600"
         owner: root
         group: root
-      notify: restart dockerd
+      notify:
+        - restart dockerd
   handlers:
     - name: Restart Docker daemon
       ansible.builtin.systemd:
         unit: docker.service
         state: restarted
-      listen: restart dockerd
+      listen:
+        - restart dockerd
 ...
