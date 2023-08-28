@@ -1,0 +1,79 @@
+---
+- name: Install Traefik
+  hosts: traefik
+  vars:
+    config_dir: "{{ traefik_config_location | default('/etc/traefik') }}"
+    container_name: "{{ traefik_container_name | default('traefik') }}"
+    network_name: "{{ traefik_network_name | default('ingress') }}"
+  tasks:
+    - name: Create directory for Traefik configuration
+      ansible.builtin.file:
+        dest: "{{ config_dir }}"
+        state: directory
+        mode: "0700"
+        owner: root
+        group: root
+    - name: Write Traefik config
+      ansible.builtin.copy:
+        dest: "{{ config_dir }}/traefik.yml"
+        content: |
+          # {{ ansible_managed }}
+
+          {{ config | to_nice_yaml(indent=2) }}
+        mode: "0600"
+        owner: root
+        group: root
+      notify:
+        - restart traefik
+      vars:
+        domains: "{{ traefik_letsencrypt_domains | default([]) }}"
+        config:
+          global:
+            checkNewVersion: false
+            sendAnonymousUsage: false
+          entrypoints:
+            http:
+              address: :80
+              http:
+                redirections:
+                  entryPoint:
+                    to: https
+                    scheme: https
+                    permanent: true
+            https:
+              address: :443
+              http:
+                tls:
+                  certResolver: leresolver
+                  domains: "{{ domains }}"
+    - name: Create edge Docker network
+      community.docker.docker_network:
+        name: "{{ network_name }}"
+    - name: Create Traefik container
+      community.docker.docker_container:
+        detach: true
+        restart_policy: unless-stopped
+        state: started
+        image: "{{ image }}"
+        name: "{{ container_name }}"
+        networks:
+          - name: "{{ network_name }}"
+        command:
+          - --providers.docker
+        ports:
+          - "80:80"
+          - "443:443"
+        volumes:
+          - "{{ config_dir }}:/etc/traefik"
+          - /var/run/docker.sock:/var/run/docker.sock
+      vars:
+        version: "{{ traefik_version | default('v2.10') }}"
+        image: docker.io/library/traefik:{{ version }}
+  handlers:
+    - name: Restart Traefik container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        restart: true
+      listen:
+        - restart traefik
+...

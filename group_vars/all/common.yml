@@ -18,4 +18,6 @@ _common_users:
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBrr+qCbWOMnIncFn+ZFzSDJsDOvTDMVLnS1BUvRaEof
 common_users_extra: []
 common_users: "{{ _common_users + common_users_extra }}"
+
+ansible_managed: Written by Ansible. DO NOT EDIT.
 ...

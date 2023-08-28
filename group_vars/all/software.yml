@@ -1,0 +1,14 @@
+---
+traefik_version: v2.10.4
+
+traefik_letsencrypt_domains:
+  - main: tdem.in
+    sans:
+      # TODO: doesn't Traefik already append it on sans list?
+      - tdem.in
+      - blog.tdem.in
+      - git.tdem.in
+      - music.tdem.in
+      - news.storage.tdem.in
+      - storage.tdem.in
+...
