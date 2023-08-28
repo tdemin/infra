@@ -1,0 +1,67 @@
+---
+- name: Install Satellite
+  hosts: satellite
+  vars:
+    version: "{{ satellite_version | default('v1.0.0') }}"
+    container_uid: "17392"
+    container_name: satellite
+    var_dir: "{{ satellite_data_dir | default('/var/lib/satellite') }}"
+    domains: "{{ satellite_domains | default([]) }}"
+  tasks:
+    - name: Create Satellite data directory
+      ansible.builtin.file:
+        dest: "{{ var_dir }}"
+        state: directory
+        mode: "0700"
+        owner: "{{ container_uid }}"
+        group: "{{ container_uid }}"
+    - name: Generate Satellite config file
+      ansible.builtin.copy:
+        dest: "{{ var_dir }}/config.toml"
+        mode: "0600"
+        owner: "{{ container_uid }}"
+        group: "{{ container_uid }}"
+        content: |
+          listen = "[::]:1965"
+          [tls]
+          directory = "/data"
+          {% for host in domains %}
+          [[domain]]
+          name = "{{ host.domain }}"
+          root = "/data/{{ host.domain }}"
+          {% endfor %}
+      notify:
+        - restart satellite
+    - name: Start Satellite container
+      community.docker.docker_container:
+        detach: true
+        restart_policy: unless-stopped
+        state: started
+        image: "{{ image }}"
+        name: "{{ container_name }}"
+        user: "{{ container_uid }}"
+        entrypoint: [/app/satellite]
+        command:
+          - -c
+          - /data/config.toml
+        ports:
+          - "1965:1965"
+        volumes: "{{ base_volumes + domain_volumes }}"
+      vars:
+        image: ghcr.io/tdemin/docker-satellite:{{ satellite_version }}
+        base_volumes: ["{{ var_dir }}:/data"]
+        domain_volumes: |
+          {% set volumes = [] %}
+          {% for host in domains %}
+          {% set volumespec = host.directory + ":/data/" + host.domain + ":ro" %}
+          {% set _ = volumes.append(volumespec) %}
+          {% endfor %}
+          {{ volumes }}
+  handlers:
+    - name: Restart Satellite
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        restart: true
+      listen:
+        - restart satellite
+...
