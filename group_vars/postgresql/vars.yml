@@ -1,6 +1,9 @@
 ---
 postgresql_version: '12.15.0-debian-11-r82'
 
+# defined for use with other playbooks
+postgresql_network_name: postgresql
+
 postgresql_environment:
   POSTGRESQL_LOG_CONNECTIONS: "true"
   POSTGRESQL_LOG_DISCONNECTIONS: "true"
@@ -9,4 +12,8 @@ postgresql_environment:
 postgresql_additional_networks:
   - gitea
   - nextcloud
+
+# for use with other containers on the wire
+postgresql_host: postgresql
+postgresql_port: 5432
 ...

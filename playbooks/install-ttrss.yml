@@ -1,0 +1,37 @@
+---
+- name: Install Tiny Tiny RSS in Docker
+  hosts: ttrss
+  # TODO: aspettl's image is highly outdated (last build 2023-04-02) but
+  # the docker-compose setup suggested at [1] needs adaptation to
+  # external databases
+  #
+  # [1]: https://gitlab.tt-rss.org/tt-rss/ttrss-docker-compose
+  vars:
+    version: "{{ ttrss_image_tag | default('latest') }}"
+    image: docker.io/aspettl/docker-ttrss{{ version }}
+    container_name: "{{ ttrss_container_name | default('ttrss') }}"
+    additional_networks: "{{ ttrss_additional_networks | default([]) }}"
+    labels: "{{ ttrss_labels | default({}) }}"
+  tasks:
+    - name: Create TTRSS container
+      community.docker.docker_container:
+        detach: true
+        restart_policy: unless-stopped
+        state: started
+        image: "{{ image }}"
+        name: "{{ container_name }}"
+        networks: |
+          {% set networks = [{'name': 'bridge'}] %}
+          {% for network_name in additional_networks %}
+          {% set _ = networks.append({'name': network_name}) %}
+          {% endfor %}
+          {{ networks }}
+        labels: "{{ labels }}"
+        env:
+          SELF_URL_PATH: "{{ ttrss_self_url }}"
+          DB_TYPE: pgsql
+          DB_HOST: "{{ ttrss_postgresql_host }}"
+          DB_PORT: "{{ ttrss_postgresql_port }}"
+          DB_USER: "{{ ttrss_postgresql_username }}"
+          DB_PASS: "{{ ttrss_postgresql_password }}"
+...

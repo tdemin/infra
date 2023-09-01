@@ -1,0 +1,19 @@
+---
+ttrss_additional_networks:
+  - "{{ traefik_network_name }}"
+  - "{{ postgresql_network_name }}"
+
+ttrss_domain: storage.tdem.in
+
+ttrss_labels:
+  traefik.http.routers.ttrss.rule: "HostSNI(`{{ ttrss_domain }}`)"
+
+ttrss_self_url: https://{{ ttrss_domain }}
+
+ttrss_image_tag: "@sha256:53d0b35c4fe93ac7a160750d653619467a7f8b79e803e83640c0ac632cafaa3e"
+
+ttrss_postgresql_host: "{{ postgresql_host }}"
+ttrss_postgresql_port: "{{ postgresql_port }}"
+ttrss_postgresql_username: ttrss
+ttrss_postgresql_password: "{{ postgresql_passwords['ttrss'] }}"
+...

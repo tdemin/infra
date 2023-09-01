@@ -1,6 +1,9 @@
 ---
 traefik_version: v2.10.4
 
+# defined for use with other playbooks
+traefik_network_name: ingress
+
 traefik_letsencrypt_domains:
   - main: tdem.in
     sans:
