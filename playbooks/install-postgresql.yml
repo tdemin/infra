@@ -1,0 +1,54 @@
+---
+- name: Install PostgreSQL in Docker
+  hosts: postgresql
+  vars:
+    container_name: "{{ postgresql_container_name | default('postgresql') }}"
+    data_dir: "{{ postgresql_data_directory | default('/var/lib/postgresql') }}"
+    version: "{{ postgresql_version | default('12') }}"
+    network: "{{ postgresql_network | default('postgresql') }}"
+    # TODO: this is up to removal as soon as all services migrate to the
+    # default network with optional attachment to PostgreSQL/Traefik
+    # networks
+    additional_networks: "{{ postgresql_additional_networks | default([]) }}"
+    env_vars: "{{ postgresql_environment | default({}) }}"
+  tasks:
+    - name: Create PostgreSQL Docker network
+      community.docker.docker_network:
+        name: "{{ network }}"
+    - name: Create data directory
+      ansible.builtin.file:
+        state: directory
+        dest: "{{ data_dir }}"
+        mode: "0700"
+        # Bitnami images use UID 1001/GID 0 to start PostgreSQL
+        owner: "1001"
+        group: "0"
+    - name: Start PostgreSQL container
+      community.docker.docker_container:
+        detach: true
+        restart_policy: unless-stopped
+        state: started
+        image: "{{ image }}"
+        name: "{{ container_name }}"
+        env: "{{ env_vars | dict_merge(pg_environment) }}"
+        networks: |
+          {% set networks = [{'name': network}] %}
+          {% for network_name in additional_networks %}
+          {% set _ = networks.append({'name': network_name}) %}
+          {% endfor %}
+          {{ networks }}
+        volumes:
+          - "{{ data_dir }}:/bitnami/postgresql"
+      vars:
+        image: docker.io/bitnami/postgresql:{{ version }}
+        pg_environment:
+          POSTGRESQL_PASSWORD: "{{ postgresql_root_password }}"
+  handlers:
+    # TODO: implement configuration? restarting is currently unused
+    - name: Restart PostgreSQL container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        restart: true
+      listen:
+        - restart postgresql
+...

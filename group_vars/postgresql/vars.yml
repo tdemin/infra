@@ -1,0 +1,15 @@
+---
+postgresql_version: '12.15.0-debian-11-r82'
+
+# TODO: up to migration to /var/lib/postgresql
+postgresql_data_directory: /containers/postgresql/data
+
+postgresql_environment:
+  POSTGRESQL_LOG_CONNECTIONS: "true"
+  POSTGRESQL_LOG_DISCONNECTIONS: "true"
+  POSTGRESQL_LOG_HOSTNAME: "true"
+
+postgresql_additional_networks:
+  - gitea
+  - nextcloud
+...
