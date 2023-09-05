@@ -3,7 +3,12 @@
   hosts: postgresql
   vars:
     container_name: "{{ postgresql_container_name | default('postgresql') }}"
+    # NOTE: playbook defaults mean the provisioning dir will be below
+    # the writable dir, and mounted an extra time RO. This means the
+    # container will still be able to modify the files. This is still
+    # convenient to keep host data directory count minimum.
     data_dir: "{{ postgresql_data_directory | default('/var/lib/postgresql') }}"
+    provisioning_dir: "{{ postgresql_provisioning_directory | default('/var/lib/postgresql/provisioning') }}"
     version: "{{ postgresql_version | default('12') }}"
     network: "{{ postgresql_network | default('postgresql') }}"
     # TODO: this is up to removal as soon as all services migrate to the
@@ -15,14 +20,31 @@
     - name: Create PostgreSQL Docker network
       community.docker.docker_network:
         name: "{{ network }}"
-    - name: Create data directory
+    - name: Create data directories
       ansible.builtin.file:
         state: directory
-        dest: "{{ data_dir }}"
+        dest: "{{ item }}"
         mode: "0700"
         # Bitnami images use UID 1001/GID 0 to start PostgreSQL
         owner: "1001"
         group: "0"
+      loop:
+        - "{{ data_dir }}"
+        - "{{ provisioning_dir }}"
+    - name: Write provisioning scripts
+      ansible.builtin.copy:
+        dest: "{{ provisioning_dir }}/{{ item.filename }}"
+        content: "{{ item.contents }}"
+        mode: "0600"
+        owner: "1001"
+        group: "0"
+      loop: "{{ scripts | dict2items(key_name='filename', value_name='contents') }}"
+      vars:
+        scripts: "{{ postgresql_entrypoint_scripts | default({}) }}"
+      # unlike the Docker Hub library image, Bitnami's ones will run
+      # provisioning scripts on every start
+      notify:
+        - restart postgresql
     - name: Start PostgreSQL container
       community.docker.docker_container:
         detach: true
@@ -39,12 +61,12 @@
           {{ networks }}
         volumes:
           - "{{ data_dir }}:/bitnami/postgresql"
+          - "{{ provisioning_dir }}:/docker-entrypoint-initdb.d:ro"
       vars:
         image: docker.io/bitnami/postgresql:{{ version }}
         pg_environment:
           POSTGRESQL_PASSWORD: "{{ postgresql_root_password }}"
   handlers:
-    # TODO: implement configuration? restarting is currently unused
     - name: Restart PostgreSQL container
       community.docker.docker_container:
         name: "{{ container_name }}"
