@@ -12,8 +12,10 @@ ttrss_self_url: https://{{ ttrss_domain }}
 
 ttrss_image_tag: "@sha256:53d0b35c4fe93ac7a160750d653619467a7f8b79e803e83640c0ac632cafaa3e"
 
-ttrss_postgresql_host: "{{ postgresql_host }}"
-ttrss_postgresql_port: "{{ postgresql_port }}"
-ttrss_postgresql_username: ttrss
-ttrss_postgresql_password: "{{ postgresql_passwords['ttrss'] }}"
+ttrss_environment:
+  SELF_URL_PATH: "{{ ttrss_self_url }}"
+  DB_HOST: "{{ postgresql_host }}"
+  DB_PORT: "{{ postgresql_port }}"
+  DB_USER: ttrss
+  DB_PASS: "{{ postgresql_passwords['ttrss'] }}"
 ...

@@ -27,11 +27,13 @@
           {% endfor %}
           {{ networks }}
         labels: "{{ labels }}"
-        env:
-          SELF_URL_PATH: "{{ ttrss_self_url }}"
+        env: "{{ merged_env }}"
+      vars:
+        default_env:
+          # IIRC, aspettl's image only includes drivers for PostgreSQL
+          # anyway
           DB_TYPE: pgsql
-          DB_HOST: "{{ ttrss_postgresql_host }}"
-          DB_PORT: "{{ ttrss_postgresql_port }}"
-          DB_USER: "{{ ttrss_postgresql_username }}"
-          DB_PASS: "{{ ttrss_postgresql_password }}"
+        merged_env: >
+          {{ ttrss_environment
+            | dict_merge(default_env) }}
 ...

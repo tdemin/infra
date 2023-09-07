@@ -15,7 +15,7 @@ postgresql_additional_networks:
 
 # for use with other containers on the wire
 postgresql_host: postgresql
-postgresql_port: 5432
+postgresql_port: "5432"
 
 # refer to postgresql_passwords for actual user specification
 postgresql_databases:
