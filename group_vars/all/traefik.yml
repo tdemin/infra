@@ -1,4 +1,0 @@
----
-# for reuse with non-Traefik-specific hosts
-traefik_network_name: ingress
-...
