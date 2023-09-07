@@ -13,7 +13,7 @@ gitea_additional_config:
     HOST: "{{ postgresql_host }}:{{ postgresql_port }}"
     NAME: gitea
     USER: gitea
-    PASSWD: "{{ postgresql_passwords['ttrss'] }}"
+    PASSWD: "{{ postgresql_passwords['gitea'] }}"
 
 gitea_container_labels:
   traefik.http.routers.gitea.rule: "HostSNI(`{{ gitea_domain }}`)"
