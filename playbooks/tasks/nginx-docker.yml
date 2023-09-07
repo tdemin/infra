@@ -1,0 +1,54 @@
+---
+- name: Create config directory
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    state: directory
+    mode: "0755"
+    owner: root
+    group: root
+  loop:
+    - "{{ nginx_config_directory }}"
+    # typical sub-config locations; TODO: do we allow anything else?
+    - "{{ nginx_config_directory }}/conf.d"
+    - "{{ nginx_config_directory }}/snippets"
+
+- name: Write config files
+  ansible.builtin.copy:
+    dest: "{{ nginx_config_directory }}/{{ item.filename }}"
+    content: "{{ item.contents }}"
+    mode: "0644"
+    owner: root
+    group: root
+  loop: "{{ nginx_config_files | dict2items(key_name='filename', value_name='contents') }}"
+  loop_control:
+    label: "{{ item.filename }}"
+  register: _nginx_config_write
+
+- name: Create nginx container
+  community.docker.docker_container:
+    detach: true
+    restart_policy: unless-stopped
+    state: started
+    image: "{{ nginx_container_image }}"
+    name: "{{ nginx_container_name }}"
+    volumes: "{{ base_volumes + nginx_container_volumes }}"
+    labels: "{{ nginx_container_labels }}"
+    networks: |
+      {% set docker_networks = [{'name': 'bridge'}] %}
+      {% for network_name in nginx_container_networks %}
+      {% set _ = docker_networks.append({'name': network_name}) %}
+      {% endfor %}
+      {{ docker_networks }}
+  vars:
+    base_volumes:
+      - "{{ nginx_config_directory }}:/etc/nginx:ro"
+
+# TODO: I don't think there's a good way to do this via handlers, as
+# change notification is per-host, while we want to restart
+# per-instance. This approach isn't great in general.
+- name: Restart nginx if config changed
+  when: _nginx_config_write.changed
+  community.docker.docker_container:
+    name: "{{ nginx_container_name }}"
+    restart: true
+...
