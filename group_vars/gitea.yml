@@ -17,4 +17,5 @@ gitea_additional_config:
 
 gitea_container_labels:
   traefik.http.routers.gitea.rule: "HostSNI(`{{ gitea_domain }}`)"
+  traefik.http.services.gitea.loadbalancer.server.port: "3000"
 ...
