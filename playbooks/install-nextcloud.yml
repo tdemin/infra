@@ -1,0 +1,56 @@
+---
+- name: Install Nextcloud in Docker
+  hosts: nextcloud
+  vars:
+    container_name: "{{ nextcloud_container_name | default('nextcloud') }}"
+    data_dir: "{{ nextcloud_data_directory | default('/var/lib/nextcloud') }}"
+    additional_networks: "{{ nextcloud_additional_networks | default([]) }}"
+    uid_gid: "33"
+  tasks:
+    - name: Create data directories
+      ansible.builtin.file:
+        dest: "{{ data_dir }}/{{ item }}"
+        state: directory
+        mode: "0700"
+        owner: "{{ uid_gid }}"
+        group: "{{ uid_gid }}"
+      loop:
+        - "" # root dir
+        - nextcloud
+        - apps
+        - config
+        - data
+    - name: Create Nextcloud container
+      community.docker.docker_container:
+        detach: true
+        restart_policy: unless-stopped
+        state: started
+        image: "{{ image }}"
+        name: "{{ container_name }}"
+        networks: |
+          {% set networks = [{'name': 'bridge'}] %}
+          {% for network_name in additional_networks %}
+          {% set _ = networks.append({'name': network_name}) %}
+          {% endfor %}
+          {{ networks }}
+        labels: "{{ labels }}"
+        volumes:
+          - "{{ data_dir }}/nextcloud:/var/www/html"
+          - "{{ data_dir }}/apps:/var/www/html/custom_apps"
+          - "{{ data_dir }}/config:/var/www/html/config"
+          - "{{ data_dir }}/data:/var/www/html/data"
+        env: "{{ merged_env }}"
+      vars:
+        image: docker.io/library/nextcloud{{ version }}
+        version: :{{ nextcloud_version | default('27') }}
+        merged_env: "{{ nextcloud_additional_environment | default({}) }}"
+        labels: "{{ nextcloud_container_labels | default({}) }}"
+    - name: Run occ update routine
+      vars:
+        do_update: "{{ nextcloud_do_update is defined and nextcloud_do_update }}"
+      when: do_update
+      community.docker.docker_container_exec:
+        container: "{{ container_name }}"
+        command: ./occ upgrade
+        user: www-data
+...

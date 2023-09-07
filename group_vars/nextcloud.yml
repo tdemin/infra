@@ -1,0 +1,18 @@
+---
+nextcloud_version: 27.0.1
+
+nextcloud_additional_networks:
+  - "{{ traefik_network_name }}"
+  - "{{ postgresql_network_name }}"
+
+nextcloud_additional_environment:
+  POSTGRES_HOST: "{{ postgresql_host }}"
+  POSTGRES_DB: nextcloud
+  POSTGRES_USER: nextcloud
+  POSTGRES_PASSWORD: "{{ postgresql_passwords['nextcloud'] }}"
+
+nextcloud_domain: storage.tdem.in
+
+nextcloud_container_labels:
+  traefik.http.routers.nextcloud.rule: "HostSNI(`{{ nextcloud_domain }}`)"
+...
