@@ -9,10 +9,6 @@ postgresql_environment:
   POSTGRESQL_LOG_DISCONNECTIONS: "true"
   POSTGRESQL_LOG_HOSTNAME: "true"
 
-postgresql_additional_networks:
-  - gitea
-  - nextcloud
-
 # for use with other containers on the wire
 postgresql_host: postgresql
 postgresql_port: "5432"
