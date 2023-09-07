@@ -5,7 +5,7 @@ ttrss_additional_networks:
 
 ttrss_domain: storage.tdem.in
 
-ttrss_labels:
+ttrss_container_labels:
   traefik.http.routers.ttrss.rule: "HostSNI(`{{ ttrss_domain }}`)"
 
 ttrss_self_url: https://{{ ttrss_domain }}

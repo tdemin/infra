@@ -11,7 +11,7 @@
     image: docker.io/aspettl/docker-ttrss{{ version }}
     container_name: "{{ ttrss_container_name | default('ttrss') }}"
     additional_networks: "{{ ttrss_additional_networks | default([]) }}"
-    labels: "{{ ttrss_labels | default({}) }}"
+    labels: "{{ ttrss_container_labels | default({}) }}"
   tasks:
     - name: Create TTRSS container
       community.docker.docker_container:
