@@ -33,7 +33,7 @@
       listen:
         - reload nftables
     - name: Restart Docker daemon
-      when: nftables_enable_docker_restart
+      when: nftables_enable_docker_restart is defined and nftables_enable_docker_restart
       ansible.builtin.systemd:
         unit: docker.service
         state: restarted
