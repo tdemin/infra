@@ -10,4 +10,7 @@
     - snapd.service
     - snapd.socket
     - snapd.seeded.service
+  # Contabo helpfully uninstalls snap in base images for us, which is
+  # very nice of them but makes Ubuntu deshittification tasks fail
+  ignore_errors: true
 ...
