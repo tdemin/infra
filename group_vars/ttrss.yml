@@ -3,10 +3,14 @@ ttrss_additional_networks:
   - "{{ traefik_network_name }}"
   - "{{ postgresql_network_name }}"
 
-ttrss_domain: storage.tdem.in
+ttrss_domain: news.storage.tdem.in
 
 ttrss_container_labels:
-  traefik.http.routers.ttrss.rule: "HostSNI(`{{ ttrss_domain }}`)"
+  traefik.enable: "true"
+  traefik.http.routers.ttrss.rule: Host(`{{ ttrss_domain }}`)
+  traefik.http.routers.ttrss.entrypoints: https
+  traefik.http.routers.ttrss.tls: "true"
+  traefik.http.routers.ttrss.tls.certresolver: letsencrypt
 
 ttrss_self_url: https://{{ ttrss_domain }}
 

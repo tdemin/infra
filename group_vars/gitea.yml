@@ -16,6 +16,10 @@ gitea_additional_config:
     PASSWD: "{{ postgresql_passwords['gitea'] }}"
 
 gitea_container_labels:
-  traefik.http.routers.gitea.rule: "HostSNI(`{{ gitea_domain }}`)"
+  traefik.enable: "true"
+  traefik.http.routers.gitea.rule: Host(`{{ gitea_domain }}`)
+  traefik.http.routers.gitea.entrypoints: https
+  traefik.http.routers.gitea.tls: "true"
+  traefik.http.routers.gitea.tls.certresolver: letsencrypt
   traefik.http.services.gitea.loadbalancer.server.port: "3000"
 ...

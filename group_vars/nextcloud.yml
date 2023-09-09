@@ -14,5 +14,9 @@ nextcloud_additional_environment:
 nextcloud_domain: storage.tdem.in
 
 nextcloud_container_labels:
-  traefik.http.routers.nextcloud.rule: "HostSNI(`{{ nextcloud_domain }}`)"
+  traefik.enable: "true"
+  traefik.http.routers.nextcloud.rule: Host(`{{ nextcloud_domain }}`)
+  traefik.http.routers.nextcloud.entrypoints: https
+  traefik.http.routers.nextcloud.tls: "true"
+  traefik.http.routers.nextcloud.tls.certresolver: letsencrypt
 ...

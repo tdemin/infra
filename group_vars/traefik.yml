@@ -4,14 +4,5 @@ traefik_version: v2.10.4
 # defined for use with other playbooks
 traefik_network_name: ingress
 
-traefik_letsencrypt_domains:
-  - main: tdem.in
-    sans:
-      # TODO: doesn't Traefik already append it on sans list?
-      - tdem.in
-      - blog.tdem.in
-      - git.tdem.in
-      - music.tdem.in
-      - news.storage.tdem.in
-      - storage.tdem.in
+traefik_letsencrypt_email: me@tdem.in
 ...
