@@ -9,7 +9,7 @@
   ansible.builtin.import_tasks: files.yml
 
 - name: Do common Ubuntu routines
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution is defined and ansible_distribution == 'Ubuntu'
   ansible.builtin.import_tasks: ubuntu.yml
 
 - name: Do common cloud-specific stuff
