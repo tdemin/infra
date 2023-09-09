@@ -1,9 +1,9 @@
 ---
-ansible_host: 193.33.194.24
+ansible_host: 91.230.110.144
 
-wan_interface_mac_address: 52:54:00:16:6e:41
+wan_interface_mac_address: 00:50:56:4c:43:fd
 wan_interface_ip: "{{ ansible_host }}/24"
-wan_interface_gateway: 193.33.194.1
+wan_interface_gateway: 91.230.110.1
 
 nftables_allowed_wan_dports_udp: ["{{ vpn_port }}"]
 nftables_allowed_wan_dports_tcp: [ssh]
@@ -46,7 +46,7 @@ nftables_extra_config: |
 networkd_extra_config:
   - dest: 30-{{ vpn_interface_name }}.key
     content: "{{ vpn_private_key }}"
-    mode: "0600"
+    mode: "0640"
     group: systemd-network
   - dest: 30-{{ vpn_interface_name }}.netdev
     content: |

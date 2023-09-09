@@ -1,25 +1,7 @@
 ---
-ansible_host: 193.33.194.118
+ansible_host: 149.102.141.88
 
-wan_interface_mac_address: 52:54:00:16:6e:33
-wan_interface_ip: "{{ ansible_host }}/24"
-wan_interface_gateway: 193.33.194.1
-
-common_users_extra:
-  - name: github
-    shell: /bin/sh
-    ssh_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILywHwazRPfHjp5qjB+RqKHd9tjyM2guY8icPi0RR0DH
-
-common_files_create:
-  - dest: /srv/static/blog.tdem.in
-    state: directory
-    mode: "0755"
-    owner: github
-    group: www-data
-  - dest: /srv/static/gemini
-    state: directory
-    mode: "0755"
-    owner: github
-    group: www-data
+wan_interface_mac_address: 00:50:56:4c:43:da
+wan_interface_ip: "{{ ansible_host }}/21"
+wan_interface_gateway: 149.102.136.1
 ...
