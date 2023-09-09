@@ -26,11 +26,16 @@
       notify:
         - restart traefik
       vars:
-        domains: "{{ traefik_letsencrypt_domains | default([]) }}"
+        email: "{{ traefik_letsencrypt_email | mandatory('must define an email for ACME') }}"
+        # TODO: make configs mergeable. Requires a recursive merge filter
         config:
           global:
             checkNewVersion: false
             sendAnonymousUsage: false
+          providers:
+            docker:
+              exposedByDefault: false
+              network: "{{ network_name }}"
           entrypoints:
             http:
               address: :80
@@ -44,8 +49,14 @@
               address: :443
               http:
                 tls:
-                  certResolver: leresolver
-                  domains: "{{ domains }}"
+                  certResolver: letsencrypt
+          certificatesResolvers:
+            letsencrypt:
+              acme:
+                email: "{{ email }}"
+                storage: /etc/traefik/acme.json
+                httpChallenge:
+                  entryPoint: http
     - name: Create edge Docker network
       community.docker.docker_network:
         name: "{{ network_name }}"
@@ -57,9 +68,9 @@
         image: "{{ image }}"
         name: "{{ container_name }}"
         networks:
+          # TODO: is this really needed to make port publishing work?
+          - name: bridge
           - name: "{{ network_name }}"
-        command:
-          - --providers.docker
         ports:
           - "80:80"
           - "443:443"
