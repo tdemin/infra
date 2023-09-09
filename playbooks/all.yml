@@ -1,0 +1,13 @@
+---
+- import_playbook: provision-os.yml
+- import_playbook: configure-networkd.yml
+- import_playbook: install-nftables.yml
+- import_playbook: install-docker.yml
+- import_playbook: install-postgresql.yml
+- import_playbook: install-traefik.yml
+- import_playbook: install-nginx.yml
+- import_playbook: install-satellite.yml
+- import_playbook: install-gitea.yml
+- import_playbook: install-nextcloud.yml
+- import_playbook: install-ttrss.yml
+...

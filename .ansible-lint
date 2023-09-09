@@ -3,4 +3,13 @@ profile: production
 
 warn_list:
   - fqcn[action-core]
+
+skip_list:
+  # if we didn't name a play, we did it for a reason, and that reason is
+  # likely meta playbooks
+  - name[play]
+
+extra_vars:
+  # is set in group vars; TODO: see .ansible-lint-ignore
+  traefik_letsencrypt_email: whatever
 ...

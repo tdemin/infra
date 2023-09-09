@@ -7,4 +7,8 @@ tasks:
     cmds:
       - ansible-playbook --syntax-check playbooks/*.yml
       - ansible-lint playbooks/*.yml
+  provision-all:
+    desc: Run all infrastructure provisioning playbooks
+    cmds:
+      - ansible-playbook --become --diff playbooks/all.yml
 ...
