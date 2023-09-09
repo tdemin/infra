@@ -8,6 +8,10 @@ wan_interface_gateway: 91.230.110.1
 nftables_allowed_wan_dports_udp: ["{{ vpn_port }}"]
 nftables_allowed_wan_dports_tcp: [ssh]
 
+common_sysctl_settings:
+  - net.ipv4.ip_forward=1
+  - net.ipv6.conf.all.forwarding=1
+
 vpn_interface_name: wg0
 vpn_port: 43821
 vpn_ips:

@@ -41,4 +41,15 @@
     group: root
     content: |
       %gsudo ALL=(ALL:ALL) NOPASSWD: ALL
+
+- name: Configure sysctl settings
+  ansible.posix.sysctl:
+    name: "{{ setting }}"
+    value: "{{ value }}"
+    sysctl_set: true
+    sysctl_file: /etc/sysctl.conf
+  loop: "{{ common_sysctl_settings | map('split', '=') }}"
+  vars:
+    setting: "{{ item[0] }}"
+    value: "{{ item[1] }}"
 ...
