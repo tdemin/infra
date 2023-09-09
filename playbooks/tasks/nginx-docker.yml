@@ -47,7 +47,7 @@
 # change notification is per-host, while we want to restart
 # per-instance. This approach isn't great in general.
 - name: Restart nginx if config changed
-  when: _nginx_config_write.changed
+  when: _nginx_config_write.changed # noqa: no-handler
   community.docker.docker_container:
     name: "{{ nginx_container_name }}"
     restart: true
