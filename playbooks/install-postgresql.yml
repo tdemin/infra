@@ -29,13 +29,16 @@
         - "{{ provisioning_dir }}"
     - name: Write provisioning scripts
       ansible.builtin.copy:
-        dest: "{{ provisioning_dir }}/{{ item.filename }}"
+        dest: "{{ target }}"
         content: "{{ item.contents }}"
         mode: "0600"
         owner: "1001"
         group: "0"
       loop: "{{ scripts | dict2items(key_name='filename', value_name='contents') }}"
+      loop_control:
+        label: "{{ target }}"
       vars:
+        target: "{{ provisioning_dir }}/{{ item.filename }}"
         scripts: "{{ postgresql_entrypoint_scripts | default({}) }}"
       # unlike the Docker Hub library image, Bitnami's ones will run
       # provisioning scripts on every start

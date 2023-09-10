@@ -14,14 +14,16 @@
 
 - name: Write config files
   ansible.builtin.copy:
-    dest: "{{ nginx_config_directory }}/{{ item.filename }}"
+    dest: "{{ target }}"
     content: "{{ item.contents }}"
     mode: "0644"
     owner: root
     group: root
+  vars:
+    target: "{{ nginx_config_directory }}/{{ item.filename }}"
   loop: "{{ nginx_config_files | dict2items(key_name='filename', value_name='contents') }}"
   loop_control:
-    label: "{{ item.filename }}"
+    label: "{{ target }}"
   register: _nginx_config_write
 
 - name: Create nginx container

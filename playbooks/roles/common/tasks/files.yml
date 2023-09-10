@@ -4,16 +4,19 @@
   loop: "{{ common_files_create }}"
   loop_control:
     loop_var: file_to_create
+    label: "{{ file_to_create.dest }}"
 
 - name: Copy files
   ansible.builtin.copy: "{{ file_to_copy }}" # noqa: risky-file-permissions
   loop: "{{ common_files_copy }}"
   loop_control:
     loop_var: file_to_copy
+    label: "{{ file_to_copy.dest }}"
 
 - name: Template files
   ansible.builtin.template: "{{ file_to_template }}" # noqa: risky-file-permissions
   loop: "{{ common_files_template }}"
   loop_control:
     loop_var: file_to_template
+    label: "{{ file_to_template.dest }}"
 ...

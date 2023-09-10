@@ -27,6 +27,8 @@
       line: PasswordAuthentication no
     - regex: ^(?:#\s*)?UsePAM\s+(?:yes|no)$
       line: UsePAM yes
+  loop_control:
+    label: "{{ item.line }}"
 
 # TODO: verify this works outside of Ubuntu. The default Ubuntu
 # installation preconfigures /etc/sudoers to include files from

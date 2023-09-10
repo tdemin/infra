@@ -11,17 +11,21 @@
   tasks:
     - name: Create data directories
       ansible.builtin.file:
-        dest: "{{ data_dir }}/{{ item }}"
+        dest: "{{ target }}"
         state: directory
         mode: "0700"
         owner: "{{ uid_gid }}"
         group: "{{ uid_gid }}"
+      vars:
+        target: "{{ data_dir }}/{{ item }}"
       loop:
         - "" # root dir
         - nextcloud
         - apps
         - config
         - data
+      loop_control:
+        label: "{{ target }}"
     - name: Create Nextcloud container
       community.docker.docker_container:
         detach: true
