@@ -10,5 +10,5 @@ tasks:
   provision-all:
     desc: Run all infrastructure provisioning playbooks
     cmds:
-      - ansible-playbook --become --diff playbooks/all.yml
+      - ansible-playbook --become --diff {{.CLI_ARGS}} playbooks/all.yml
 ...
