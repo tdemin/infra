@@ -48,7 +48,7 @@
           - "1965:1965"
         volumes: "{{ base_volumes + domain_volumes }}"
       vars:
-        image: ghcr.io/tdemin/docker-satellite:{{ satellite_version }}
+        image: ghcr.io/tdemin/docker-satellite:{{ version }}
         base_volumes: ["{{ var_dir }}:/data"]
         domain_volumes: |
           {% set volumes = [] %}

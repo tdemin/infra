@@ -6,6 +6,8 @@
     image: docker.io/library/nginx:{{ version }}
     version: 1.24.0-bullseye
     base_dir: "{{ nginx_base_config_directory | default('/var/lib/nginx') }}"
+  vars_files:
+    - vars/docker.yml
   tasks:
     - name: Ensure config directory exists
       ansible.builtin.file:

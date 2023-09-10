@@ -1,6 +1,8 @@
 ---
 - name: Install Nextcloud in Docker
   hosts: nextcloud
+  vars_files:
+    - vars/docker.yml
   vars:
     container_name: "{{ nextcloud_container_name | default('nextcloud') }}"
     data_dir: "{{ nextcloud_data_directory | default('/var/lib/nextcloud') }}"
@@ -27,12 +29,7 @@
         state: started
         image: "{{ image }}"
         name: "{{ container_name }}"
-        networks: |
-          {% set networks = [{'name': 'bridge'}] %}
-          {% for network_name in additional_networks %}
-          {% set _ = networks.append({'name': network_name}) %}
-          {% endfor %}
-          {{ networks }}
+        networks: "{{ networks_with_bridge }}"
         labels: "{{ labels }}"
         volumes:
           - "{{ data_dir }}/nextcloud:/var/www/html"

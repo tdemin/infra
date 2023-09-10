@@ -1,10 +1,14 @@
 ---
 - name: Install Traefik
   hosts: traefik
+  vars_files:
+    - vars/docker.yml
   vars:
+    version: "{{ traefik_version | default('v2.10') }}"
     config_dir: "{{ traefik_config_location | default('/etc/traefik') }}"
     container_name: "{{ traefik_container_name | default('traefik') }}"
     network_name: "{{ traefik_network_name | default('ingress') }}"
+    email: "{{ traefik_letsencrypt_email | mandatory('must define an email for ACME') }}"
   tasks:
     - name: Create directory for Traefik configuration
       ansible.builtin.file:
@@ -26,7 +30,6 @@
       notify:
         - restart traefik
       vars:
-        email: "{{ traefik_letsencrypt_email | mandatory('must define an email for ACME') }}"
         # TODO: make configs mergeable. Requires a recursive merge filter
         config:
           global:
@@ -67,10 +70,7 @@
         state: started
         image: "{{ image }}"
         name: "{{ container_name }}"
-        networks:
-          # TODO: is this really needed to make port publishing work?
-          - name: bridge
-          - name: "{{ network_name }}"
+        networks: "{{ networks_with_bridge }}"
         ports:
           - "80:80"
           - "443:443"
@@ -78,8 +78,9 @@
           - "{{ config_dir }}:/etc/traefik"
           - /var/run/docker.sock:/var/run/docker.sock
       vars:
-        version: "{{ traefik_version | default('v2.10') }}"
         image: docker.io/library/traefik:{{ version }}
+        additional_networks:
+          - "{{ network_name }}"
   handlers:
     - name: Restart Traefik container
       community.docker.docker_container:

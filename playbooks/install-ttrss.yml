@@ -6,12 +6,14 @@
   # external databases
   #
   # [1]: https://gitlab.tt-rss.org/tt-rss/ttrss-docker-compose
+  vars_files:
+    - vars/docker.yml
   vars:
     version: "{{ ttrss_image_tag | default('latest') }}"
-    image: docker.io/aspettl/docker-ttrss{{ version }}
     container_name: "{{ ttrss_container_name | default('ttrss') }}"
     additional_networks: "{{ ttrss_additional_networks | default([]) }}"
     labels: "{{ ttrss_container_labels | default({}) }}"
+    custom_env: "{{ ttrss_environment | default({}) }}"
   tasks:
     - name: Create TTRSS container
       community.docker.docker_container:
@@ -20,20 +22,22 @@
         state: started
         image: "{{ image }}"
         name: "{{ container_name }}"
-        networks: |
-          {% set networks = [{'name': 'bridge'}] %}
-          {% for network_name in additional_networks %}
-          {% set _ = networks.append({'name': network_name}) %}
-          {% endfor %}
-          {{ networks }}
+        networks: "{{ networks_with_bridge }}"
         labels: "{{ labels }}"
         env: "{{ merged_env }}"
       vars:
+        image_tag: >-
+          {%- if 'sha256' in version -%}
+          @{{ version }}
+          {%- else -%}
+          :{{ version }}
+          {%- endif -%}
+        image: docker.io/aspettl/docker-ttrss{{ image_tag }}
         default_env:
           # IIRC, aspettl's image only includes drivers for PostgreSQL
           # anyway
           DB_TYPE: pgsql
         merged_env: >
-          {{ ttrss_environment
+          {{ custom_env
             | dict_merge(default_env) }}
 ...

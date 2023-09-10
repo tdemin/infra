@@ -33,13 +33,9 @@
     name: "{{ nginx_container_name }}"
     volumes: "{{ base_volumes + nginx_container_volumes }}"
     labels: "{{ nginx_container_labels }}"
-    networks: |
-      {% set docker_networks = [{'name': 'bridge'}] %}
-      {% for network_name in nginx_container_networks %}
-      {% set _ = docker_networks.append({'name': network_name}) %}
-      {% endfor %}
-      {{ docker_networks }}
+    networks: "{{ networks_with_bridge }}"
   vars:
+    additional_networks: "{{ nginx_container_networks }}"
     base_volumes:
       - "{{ nginx_config_directory }}:/etc/nginx:ro"
 

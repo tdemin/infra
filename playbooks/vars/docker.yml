@@ -1,0 +1,9 @@
+---
+# expects "additional_networks" to be a list of Docker network names
+networks_with_bridge: |
+  {% set networks = [{'name': 'bridge'}] %}
+  {% for network_name in additional_networks %}
+  {% set _ = networks.append({'name': network_name}) %}
+  {% endfor %}
+  {{ networks }}
+...

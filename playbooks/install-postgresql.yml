@@ -11,10 +11,6 @@
     provisioning_dir: "{{ postgresql_provisioning_directory | default('/var/lib/postgresql/provisioning') }}"
     version: "{{ postgresql_version | default('12') }}"
     network: "{{ postgresql_network | default('postgresql') }}"
-    # TODO: this is up to removal as soon as all services migrate to the
-    # default network with optional attachment to PostgreSQL/Traefik
-    # networks
-    additional_networks: "{{ postgresql_additional_networks | default([]) }}"
     env_vars: "{{ postgresql_environment | default({}) }}"
   tasks:
     - name: Create PostgreSQL Docker network
@@ -53,12 +49,8 @@
         image: "{{ image }}"
         name: "{{ container_name }}"
         env: "{{ env_vars | dict_merge(pg_environment) }}"
-        networks: |
-          {% set networks = [{'name': network}] %}
-          {% for network_name in additional_networks %}
-          {% set _ = networks.append({'name': network_name}) %}
-          {% endfor %}
-          {{ networks }}
+        networks:
+          - name: "{{ network }}"
         volumes:
           - "{{ data_dir }}:/bitnami/postgresql"
           - "{{ provisioning_dir }}:/docker-entrypoint-initdb.d:ro"

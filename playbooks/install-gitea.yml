@@ -1,10 +1,16 @@
 ---
 - name: Install Gitea in Docker
   hosts: gitea
+  vars_files:
+    - vars/docker.yml
   vars:
     container_name: "{{ gitea_container_name | default('gitea') }}"
     data_dir: "{{ gitea_data_directory | default('/var/lib/gitea') }}"
     uid_gid: "1000"
+    additional_networks: "{{ gitea_additional_networks | default([]) }}"
+    version: "{{ gitea_version | default('1.17') }}"
+    labels: "{{ gitea_container_labels | default({}) }}"
+    extra_config: "{{ gitea_additional_config | default({}) }}"
   tasks:
     - name: Create data directory
       ansible.builtin.file:
@@ -24,21 +30,15 @@
         volumes:
           - "{{ data_dir }}:/data"
         labels: "{{ labels }}"
-        networks: |
-          {% set docker_networks = [{'name': 'bridge'}] %}
-          {% for network_name in networks %}
-          {% set _ = docker_networks.append({'name': network_name}) %}
-          {% endfor %}
-          {{ docker_networks }}
+        networks: "{{ networks_with_bridge }}"
       vars:
-        image: docker.io/gitea/gitea:{{ gitea_version | default('1.17') }}
+        image: docker.io/gitea/gitea:{{ version }}
         labels: "{{ gitea_container_labels | default({}) }}"
-        networks: "{{ gitea_additional_networks | default([]) }}"
         default_env:
           USER_UID: "{{ uid_gid }}"
           USER_GID: "{{ uid_gid }}"
         merged_env: >
-          {{ (gitea_additional_config | default({}))
+          {{ extra_config
               | gitea_dict_to_env_dict
               | dict_merge(default_env) }}
 ...
