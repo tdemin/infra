@@ -1,0 +1,9 @@
+---
+- name: Install OS updates
+  hosts: ubuntu
+  tasks:
+    - name: Install APT updates
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist
+...
