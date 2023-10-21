@@ -1,5 +1,5 @@
 ---
-postgresql_version: '12.15.0-debian-11-r82'
+postgresql_version: '12.16.0-debian-11-r54'
 
 # defined for use with other playbooks
 postgresql_network_name: postgresql
