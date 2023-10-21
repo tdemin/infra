@@ -6,4 +6,12 @@
       ansible.builtin.apt:
         update_cache: true
         upgrade: dist
+      notify:
+        - apt autoremove
+  handlers:
+    - name: Run apt autoremove
+      ansible.builtin.apt:
+        autoremove: true
+      listen:
+        - apt autoremove
 ...
