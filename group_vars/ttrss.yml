@@ -14,7 +14,7 @@ ttrss_container_labels:
 
 ttrss_self_url: https://{{ ttrss_domain }}
 
-ttrss_image_tag: "@sha256:53d0b35c4fe93ac7a160750d653619467a7f8b79e803e83640c0ac632cafaa3e"
+ttrss_image_tag: sha256:53d0b35c4fe93ac7a160750d653619467a7f8b79e803e83640c0ac632cafaa3e
 
 ttrss_environment:
   SELF_URL_PATH: "{{ ttrss_self_url }}"
