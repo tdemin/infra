@@ -33,7 +33,6 @@
         state: started
         image: "{{ image }}"
         name: "{{ container.name }}"
-        user: "{{ container.user }}"
         command: "{{ container.cmd }}"
         networks: "{{ networks_with_bridge }}"
         labels: "{{ container.labels }}"
@@ -52,11 +51,9 @@
         - name: "{{ container_name }}"
           cmd: apache2-foreground
           labels: "{{ labels }}"
-          user: "0"
         - name: "{{ container_name }}-cron"
           cmd: /cron.sh
           labels: {}
-          user: "33"
       loop_control:
         loop_var: container
     - name: Run occ update routine
