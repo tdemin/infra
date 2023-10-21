@@ -26,6 +26,7 @@
         labels: "{{ labels }}"
         env: "{{ merged_env }}"
       vars:
+        # noqa: jinja[spacing] - a pretty obvious false positive
         image_tag: >-
           {%- if 'sha256' in version -%}
           @{{ version }}
