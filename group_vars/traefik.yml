@@ -1,5 +1,5 @@
 ---
-traefik_version: v2.10.4
+traefik_version: v2.10.5
 
 # defined for use with other playbooks
 traefik_network_name: ingress
