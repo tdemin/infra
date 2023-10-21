@@ -19,4 +19,8 @@ nextcloud_container_labels:
   traefik.http.routers.nextcloud.entrypoints: https
   traefik.http.routers.nextcloud.tls: "true"
   traefik.http.routers.nextcloud.tls.certresolver: letsencrypt
+  traefik.http.routers.nextcloud.middlewares: nextcloud_redirectregex
+  traefik.http.middlewares.nextcloud_redirectregex.redirectregex.permanent: "true"
+  traefik.http.middlewares.nextcloud_redirectregex.redirectregex.regex: https://(.*)/.well-known/(?:card|cal)dav
+  traefik.http.middlewares.nextcloud_redirectregex.redirectregex.replacement: https://$${1}/remote.php/dav
 ...
