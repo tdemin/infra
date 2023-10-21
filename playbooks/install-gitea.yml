@@ -11,6 +11,14 @@
     version: "{{ gitea_version | default('1.17') }}"
     labels: "{{ gitea_container_labels | default({}) }}"
     extra_config: "{{ gitea_additional_config | default({}) }}"
+    extra_files: "{{ gitea_additional_files | default([]) }}"
+  handlers:
+    - name: Restart Gitea
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        restart: true
+      listen:
+        - restart gitea
   tasks:
     - name: Create data directory
       ansible.builtin.file:
@@ -41,4 +49,16 @@
           {{ extra_config
               | gitea_dict_to_env_dict
               | dict_merge(default_env) }}
+    - name: Copy any additional files
+      ansible.builtin.copy:
+        src: "{{ file.src }}"
+        dest: "{{ data_dir }}/gitea/{{ file.dest }}"
+        mode: "0644"
+        owner: "{{ uid_gid }}"
+        group: "{{ uid_gid }}"
+      loop: "{{ extra_files }}"
+      loop_control:
+        loop_var: file
+      notify:
+        - restart gitea
 ...
