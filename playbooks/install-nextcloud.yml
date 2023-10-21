@@ -32,9 +32,11 @@
         restart_policy: unless-stopped
         state: started
         image: "{{ image }}"
-        name: "{{ container_name }}"
+        name: "{{ container.name }}"
+        user: "{{ container.user }}"
+        command: "{{ container.cmd }}"
         networks: "{{ networks_with_bridge }}"
-        labels: "{{ labels }}"
+        labels: "{{ container.labels }}"
         volumes:
           - "{{ data_dir }}/nextcloud:/var/www/html"
           - "{{ data_dir }}/apps:/var/www/html/custom_apps"
@@ -46,6 +48,17 @@
         version: :{{ nextcloud_version | default('27') }}
         merged_env: "{{ nextcloud_additional_environment | default({}) }}"
         labels: "{{ nextcloud_container_labels | default({}) }}"
+      loop:
+        - name: "{{ container_name }}"
+          cmd: apache2-foreground
+          labels: "{{ labels }}"
+          user: "0"
+        - name: "{{ container_name }}-cron"
+          cmd: /cron.sh
+          labels: {}
+          user: "33"
+      loop_control:
+        loop_var: container
     - name: Run occ update routine
       vars:
         do_update: "{{ nextcloud_do_update is defined and nextcloud_do_update }}"
