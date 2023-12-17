@@ -49,6 +49,19 @@
           {{ extra_config
               | gitea_dict_to_env_dict
               | dict_merge(default_env) }}
+    - name: Create any additional directories needed
+      ansible.builtin.file:
+        state: directory
+        dest: "{{ data_dir }}/gitea/{{ directory }}"
+        mode: "0755"
+        owner: "{{ uid_gid }}"
+        group: "{{ uid_gid }}"
+      loop: "{{ extra_files }}"
+      loop_control:
+        label: "{{ directory }}"
+        loop_var: file
+      vars:
+        directory: "{{ file.dest | dirname }}"
     - name: Copy any additional files
       ansible.builtin.copy:
         src: "{{ file.src }}"

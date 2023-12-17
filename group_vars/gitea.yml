@@ -1,5 +1,5 @@
 ---
-gitea_version: 1.20.5
+gitea_version: 1.21.2
 
 gitea_additional_networks:
   - "{{ traefik_network_name }}"
@@ -28,5 +28,5 @@ gitea_additional_files:
   - src: files/misc/gitea/head_navbar.tmpl
     dest: templates/base/head_navbar.tmpl
   - src: files/misc/gitea/git_icon.png
-    dest: public/git_icon.png
+    dest: public/assets/git_icon.png
 ...
