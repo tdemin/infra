@@ -57,11 +57,18 @@
       loop_control:
         loop_var: container
     - name: Run occ update routine
+      when: do_update
+      block:
+        - name: Run occ upgrade
+          community.docker.docker_container_exec:
+            container: "{{ container_name }}"
+            command: ./occ upgrade -n
+            user: www-data
+        - name: Run occ maintenance:mode --off
+          community.docker.docker_container_exec:
+            container: "{{ container_name }}"
+            command: ./occ maintenance:mode --off -n
+            user: www-data
       vars:
         do_update: "{{ nextcloud_do_update is defined and nextcloud_do_update }}"
-      when: do_update
-      community.docker.docker_container_exec:
-        container: "{{ container_name }}"
-        command: ./occ upgrade
-        user: www-data
 ...
