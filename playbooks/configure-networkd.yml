@@ -1,6 +1,7 @@
 ---
 - name: Configure networking on Linux machines
   hosts: linux
+
   tasks:
     - name: Copy network config files
       ansible.builtin.import_role:
@@ -22,6 +23,7 @@
         common_files_template: []
       notify:
         - restart systemd-networkd
+
   handlers:
     # while systemd-networkd technically allows reloading configs, the
     # reload it does generally results in some of the configuration

@@ -1,13 +1,15 @@
 ---
 - name: Install a required amount of nginx instances in Docker
   hosts: nginx
+
+  vars_files:
+    - vars/docker.yml
   vars:
     instances: "{{ nginx_instances | default([]) }}"
     image: docker.io/library/nginx:{{ version }}
     version: 1.24.0-bullseye
     base_dir: "{{ nginx_base_config_directory | default('/var/lib/nginx') }}"
-  vars_files:
-    - vars/docker.yml
+
   tasks:
     - name: Ensure config directory exists
       ansible.builtin.file:
@@ -19,6 +21,7 @@
       loop:
         - "{{ base_dir }}"
         - "{{ base_dir }}/config"
+
     - name: Create required amount of nginx instances
       ansible.builtin.include_tasks: tasks/nginx-docker.yml
       loop: "{{ instances }}"

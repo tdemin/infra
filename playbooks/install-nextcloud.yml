@@ -1,6 +1,7 @@
 ---
 - name: Install Nextcloud in Docker
   hosts: nextcloud
+
   vars_files:
     - vars/docker.yml
   vars:
@@ -8,6 +9,7 @@
     data_dir: "{{ nextcloud_data_directory | default('/var/lib/nextcloud') }}"
     additional_networks: "{{ nextcloud_additional_networks | default([]) }}"
     uid_gid: "33"
+
   tasks:
     - name: Create data directories
       ansible.builtin.file:
@@ -26,6 +28,7 @@
         - data
       loop_control:
         label: "{{ target }}"
+
     - name: Create Nextcloud container
       community.docker.docker_container:
         detach: true
@@ -56,8 +59,11 @@
           labels: {}
       loop_control:
         loop_var: container
+
     - name: Run occ update routine
       when: do_update
+      vars:
+        do_update: "{{ nextcloud_do_update is defined and nextcloud_do_update }}"
       block:
         - name: Run occ upgrade
           community.docker.docker_container_exec:
@@ -69,6 +75,4 @@
             container: "{{ container_name }}"
             command: ./occ maintenance:mode --off -n
             user: www-data
-      vars:
-        do_update: "{{ nextcloud_do_update is defined and nextcloud_do_update }}"
 ...

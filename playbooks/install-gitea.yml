@@ -1,6 +1,7 @@
 ---
 - name: Install Gitea in Docker
   hosts: gitea
+
   vars_files:
     - vars/docker.yml
   vars:
@@ -12,6 +13,7 @@
     labels: "{{ gitea_container_labels | default({}) }}"
     extra_config: "{{ gitea_additional_config | default({}) }}"
     extra_files: "{{ gitea_additional_files | default([]) }}"
+
   handlers:
     - name: Restart Gitea
       community.docker.docker_container:
@@ -19,6 +21,7 @@
         restart: true
       listen:
         - restart gitea
+
   tasks:
     - name: Create data directory
       ansible.builtin.file:
@@ -27,6 +30,7 @@
         mode: "0700"
         owner: "{{ uid_gid }}"
         group: "{{ uid_gid }}"
+
     - name: Create Gitea container
       community.docker.docker_container:
         detach: true
@@ -49,6 +53,7 @@
           {{ extra_config
               | gitea_dict_to_env_dict
               | dict_merge(default_env) }}
+
     - name: Create any additional directories needed
       ansible.builtin.file:
         state: directory
@@ -62,6 +67,7 @@
         loop_var: file
       vars:
         directory: "{{ file.dest | dirname }}"
+
     - name: Copy any additional files
       ansible.builtin.copy:
         src: "{{ file.src }}"

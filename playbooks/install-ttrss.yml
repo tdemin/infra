@@ -1,6 +1,7 @@
 ---
 - name: Install Tiny Tiny RSS in Docker
   hosts: ttrss
+
   # TODO: aspettl's image is highly outdated (last build 2023-04-02) but
   # the docker-compose setup suggested at [1] needs adaptation to
   # external databases
@@ -14,6 +15,7 @@
     additional_networks: "{{ ttrss_additional_networks | default([]) }}"
     labels: "{{ ttrss_container_labels | default({}) }}"
     custom_env: "{{ ttrss_environment | default({}) }}"
+
   tasks:
     - name: Create TTRSS container
       community.docker.docker_container:

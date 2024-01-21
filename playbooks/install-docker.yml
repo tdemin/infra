@@ -8,6 +8,7 @@
 - name: Configure Docker daemon
   hosts: docker
   become: true
+
   tasks:
     - name: Generate config file
       when: docker_daemon_config is defined and docker_daemon_config
@@ -20,6 +21,7 @@
         group: root
       notify:
         - restart dockerd
+
   handlers:
     - name: Restart Docker daemon
       ansible.builtin.systemd:

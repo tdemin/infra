@@ -1,11 +1,13 @@
 ---
 - name: Install & configure nftables
   hosts: linux
+
   tasks:
     - name: Install nftables
       ansible.builtin.apt:
         name:
           - nftables
+
     - name: Write nftables config
       ansible.builtin.copy:
         dest: /etc/nftables.conf
@@ -21,10 +23,12 @@
         # Docker isolation rules get reset on ruleset flush (which is
         # what one does at the start of a proper nftables config anyway)
         - restart dockerd
+
     - name: Ensure nftables is enabled at boot
       ansible.builtin.systemd:
         unit: nftables.service
         enabled: true
+
   handlers:
     - name: Reload nftables configuration
       ansible.builtin.systemd:
@@ -32,6 +36,7 @@
         state: reloaded
       listen:
         - reload nftables
+
     - name: Restart Docker daemon
       when: nftables_enable_docker_restart is defined and nftables_enable_docker_restart
       ansible.builtin.systemd:

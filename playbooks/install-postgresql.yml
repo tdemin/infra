@@ -1,6 +1,7 @@
 ---
 - name: Install PostgreSQL in Docker
   hosts: postgresql
+
   vars:
     container_name: "{{ postgresql_container_name | default('postgresql') }}"
     # NOTE: playbook defaults mean the provisioning dir will be below
@@ -12,10 +13,12 @@
     version: "{{ postgresql_version | default('12') }}"
     network: "{{ postgresql_network | default('postgresql') }}"
     env_vars: "{{ postgresql_environment | default({}) }}"
+
   tasks:
     - name: Create PostgreSQL Docker network
       community.docker.docker_network:
         name: "{{ network }}"
+
     - name: Create data directories
       ansible.builtin.file:
         state: directory
@@ -27,6 +30,7 @@
       loop:
         - "{{ data_dir }}"
         - "{{ provisioning_dir }}"
+
     - name: Write provisioning scripts
       ansible.builtin.copy:
         dest: "{{ target }}"
@@ -44,6 +48,7 @@
       # provisioning scripts on every start
       notify:
         - restart postgresql
+
     - name: Start PostgreSQL container
       community.docker.docker_container:
         detach: true
@@ -61,6 +66,7 @@
         image: docker.io/bitnami/postgresql:{{ version }}
         pg_environment:
           POSTGRESQL_PASSWORD: "{{ postgresql_root_password }}"
+
   handlers:
     - name: Restart PostgreSQL container
       community.docker.docker_container:

@@ -1,6 +1,7 @@
 ---
 - name: Install OS updates
   hosts: ubuntu
+
   tasks:
     - name: Install APT updates
       ansible.builtin.apt:
@@ -8,6 +9,7 @@
         upgrade: dist
       notify:
         - apt autoremove
+
   handlers:
     - name: Run apt autoremove
       ansible.builtin.apt:

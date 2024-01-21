@@ -1,6 +1,7 @@
 ---
 - name: Install Traefik
   hosts: traefik
+
   vars_files:
     - vars/docker.yml
   vars:
@@ -9,6 +10,7 @@
     container_name: "{{ traefik_container_name | default('traefik') }}"
     network_name: "{{ traefik_network_name | default('ingress') }}"
     email: "{{ traefik_letsencrypt_email | mandatory('must define an email for ACME') }}"
+
   tasks:
     - name: Create directory for Traefik configuration
       ansible.builtin.file:
@@ -17,6 +19,7 @@
         mode: "0700"
         owner: root
         group: root
+
     - name: Write Traefik config
       ansible.builtin.copy:
         dest: "{{ config_dir }}/traefik.yml"
@@ -60,9 +63,11 @@
                 storage: /etc/traefik/acme.json
                 httpChallenge:
                   entryPoint: http
+
     - name: Create edge Docker network
       community.docker.docker_network:
         name: "{{ network_name }}"
+
     - name: Create Traefik container
       community.docker.docker_container:
         detach: true
@@ -81,6 +86,7 @@
         image: docker.io/library/traefik:{{ version }}
         additional_networks:
           - "{{ network_name }}"
+
   handlers:
     - name: Restart Traefik container
       community.docker.docker_container:

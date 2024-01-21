@@ -1,12 +1,14 @@
 ---
 - name: Install Satellite
   hosts: satellite
+
   vars:
     version: "{{ satellite_version | default('v1.0.0') }}"
     container_uid: "17392"
     container_name: satellite
     var_dir: "{{ satellite_data_dir | default('/var/lib/satellite') }}"
     domains: "{{ satellite_domains | default([]) }}"
+
   tasks:
     - name: Create Satellite data directory
       ansible.builtin.file:
@@ -15,6 +17,7 @@
         mode: "0700"
         owner: "{{ container_uid }}"
         group: "{{ container_uid }}"
+
     - name: Generate Satellite config file
       ansible.builtin.copy:
         dest: "{{ var_dir }}/config.toml"
@@ -32,6 +35,7 @@
           {% endfor %}
       notify:
         - restart satellite
+
     - name: Start Satellite container
       community.docker.docker_container:
         detach: true
@@ -57,6 +61,7 @@
           {% set _ = volumes.append(volumespec) %}
           {% endfor %}
           {{ volumes }}
+
   handlers:
     - name: Restart Satellite
       community.docker.docker_container:
