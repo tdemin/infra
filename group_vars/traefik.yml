@@ -1,8 +1,0 @@
----
-traefik_version: v2.10.5
-
-# defined for use with other playbooks
-traefik_network_name: ingress
-
-traefik_letsencrypt_email: me@tdem.in
-...

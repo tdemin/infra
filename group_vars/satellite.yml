@@ -1,7 +1,0 @@
----
-satellite_version: v1.0.0
-
-satellite_domains:
-  - domain: tdem.in
-    directory: /srv/static/gemini
-...
